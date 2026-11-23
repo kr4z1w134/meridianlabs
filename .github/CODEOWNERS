@@ -1,0 +1,8 @@
+* @meridian/platform-team
+
+/src/client/ @meridian/frontend
+/src/server/ @meridian/platform-team
+/prisma/ @meridian/platform-team
+/.github/ @meridian/infra
+/Dockerfile @meridian/infra
+/docker-compose.yml @meridian/infra

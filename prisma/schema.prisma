@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(cuid())
+  email      String   @unique
+  name       String
+  password   String
+  role       String   @default("member")
+  department String?
+  plan       String   @default("starter")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  issues      Issue[]
+  deployments Deployment[]
+
+  @@map("users")
+}
+
+model Issue {
+  id          String   @id @default(cuid())
+  title       String
+  body        String
+  status      String   @default("open")
+  priority    String   @default("medium")
+  labels      String[] @default([])
+  reporterId  String   @map("reporter_id")
+  reporter    User     @relation(fields: [reporterId], references: [id])
+  assignee    String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("issues")
+}
+
+model Deployment {
+  id          String   @id @default(cuid())
+  environment String
+  branch      String
+  commitSha   String?  @map("commit_sha")
+  status      String   @default("pending")
+  triggeredBy String   @map("triggered_by")
+  trigger     User     @relation(fields: [triggeredBy], references: [id])
+  startedAt   DateTime @default(now()) @map("started_at")
+  finishedAt  DateTime? @map("finished_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("deployments")
+}
